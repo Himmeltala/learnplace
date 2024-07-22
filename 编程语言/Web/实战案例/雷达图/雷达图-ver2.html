@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>雷达图</title>
+  <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.js"></script>
+  <link href="css/main.css" rel="stylesheet" />
+</head>
+<body>
+<div id="radar-wrap">
+  <canvas height="600" id="radar-map" width="600">Your browser version is too late.</canvas>
+  <div id="floating-panel"></div>
+</div>
+<script src="js/canvasGrid.js"></script>
+<script src="js/main.js"></script>
+<script src="js/dataArea.js"></script>
+<script>
+  let canvas = document.getElementById("radar-map");
+  let ctx = canvas.getContext("2d");
+  drawGrid(600, 600, 50);
+
+  let r = new RadarMap(
+    ctx,
+    {
+      radarLayers: 5,
+      polygonPerStep: 40,
+      radarMapTotalSides: 10,
+      radarX: 300,
+      radarY: 300
+    },
+    dataArea,
+    {
+      radar: {
+        lineWidth: 1,
+        lineColor: "black",
+        textColor: "black",
+        textSize: 16
+      },
+      dataArea: {
+        lineWidth: 1,
+        lineColor: "rgba(68,226,155, 1)",
+        fillColor: "rgba(81,182,137, 0.6)"
+      }
+    }
+  );
+
+  let axis = r.drawRadarMap();
+  r.drawFloatingPanel(axis);
+</script>
+</body>
+</html>

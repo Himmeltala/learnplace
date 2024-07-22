@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>exp1-cust-attrs</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/jointjs/3.7.4/joint.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<!-- content -->
+<div id="paper-custom-elements"></div>
+
+<!-- dependencies -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.4.1/backbone.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jointjs/3.7.4/joint.js"></script>
+
+<!-- code -->
+<script>
+  const namespace = joint.shapes;
+  const graph = new joint.dia.Graph({}, { cellNamespace: namespace });
+  const paper = new joint.dia.Paper({
+    el: document.getElementById("paper-custom-elements"),
+    model: graph,
+    width: 1000,
+    height: 400,
+    gridSize: 10,
+    drawGrid: true,
+    background: {
+      color: "rgba(0, 255, 0, 0.3)"
+    },
+    cellViewNamespace: namespace
+  });
+
+  joint.dia.Element.define(
+    "standard.Rectangle",
+    {
+      attrs: {
+        // 我们定义的 markup 中第一个对象 selector 同样也对应这里的 key。
+        // body: {
+        main: {
+          width: "calc(w)",
+          height: "calc(h)",
+          strokeWidth: 2,
+          stroke: "#000000",
+          fill: "#FFFFFF"
+        },
+        label: {
+          textVerticalAnchor: "middle",
+          textAnchor: "middle",
+          x: "calc(0.5*w)",
+          y: "calc(0.5*h)",
+          fontSize: 12,
+          fill: "#333333"
+        }
+      }
+    },
+    {
+      markup: [
+        // 这个图形中有一个子元素 RectSVGELement，因此 tagName: "rect"。而 selector 的意思是在定义的图形中，当
+        // 对的 RectSVGELement 设置自定义 attrs 时 rect.attr({body: {}}) 中这个 key 里面的属性会应用到
+        // RectSVGELement 中。
+        {
+          tagName: "rect",
+          // selector: "body"
+          selector: "main"
+        },
+        {
+          tagName: "text",
+          selector: "label"
+        }
+      ]
+    }
+  );
+
+  const rect = new joint.shapes.standard.Rectangle();
+  rect.position(50, 50);
+  rect.resize(150, 50);
+  rect.attr({
+    main: {
+      rx: 10
+    },
+    label: {
+      text: "Hello World!"
+    }
+  });
+
+  graph.addCells(rect);
+</script>
+</body>
+</html>

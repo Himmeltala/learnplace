@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Document</title>
+
+  <!-- dependencies -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.4.1/backbone.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jointjs/3.7.4/joint.js"></script>
+</head>
+<body>
+<div id="paper"></div>
+<script>
+  var graph = new joint.dia.Graph();
+  var paper = new joint.dia.Paper({
+    el: $("#paper"),
+    width: 800,
+    height: 600,
+    model: graph,
+    interactive: { linkMove: false } // 禁用自动链接移动
+  });
+
+  var sourceElement = new joint.shapes.standard.Rectangle({
+    position: { x: 100, y: 100 },
+    size: { width: 100, height: 40 },
+    attrs: {
+      rect: { fill: "blue" },
+      text: { text: "Element 1", fill: "white" }
+    }
+  });
+
+  graph.addCell(sourceElement);
+
+  paper.on("cell:pointerdown", function(cellView, evt, x, y) {
+    if (cellView.model instanceof joint.dia.Element) {
+      var link = new joint.shapes.standard.Link({
+        source: { id: cellView.model.id },
+        target: { x: x, y: y },
+        attrs: {
+          line: { stroke: "red", strokeWidth: 2 }
+        }
+      });
+
+      graph.addCell(link);
+
+      var linkView = paper.findViewByModel(link);
+      linkView.startArrowheadMove("target"); // 开始拖动箭头
+      linkView.pointerdown(evt, x, y); // 触发指针按下事件
+    }
+  });
+
+  paper.on("cell:pointerup", function(cellView) {
+    if (cellView.model instanceof joint.dia.Link) {
+      var linkView = paper.findViewByModel(cellView.model);
+      linkView.stopArrowheadMove(); // 停止拖动箭头
+    }
+  });
+</script>
+</body>
+</html>

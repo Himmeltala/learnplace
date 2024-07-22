@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>多边形</title>
+</head>
+<body>
+<canvas height="200" id="radar-map" width="200">Your browser version is too late.</canvas>
+<script>
+  let canvas = document.getElementById("radar-map");
+  let ctx = canvas.getContext("2d");
+
+  drawPolygonPath(6, 80, 100, 100);
+
+  function drawPolygonPath(sides, radius, circX, circY) {
+    let angle = (Math.PI * 2) / sides;
+    let accumulator = 0;
+
+    ctx.beginPath();
+    for (let i = 0; i < sides; i++) {
+      let adjacentSide = Math.cos(accumulator) * radius;
+      let beveledSide = Math.sin(accumulator) * radius;
+      let aX = circX + adjacentSide;
+      let aY = circY - beveledSide;
+      ctx.lineTo(aX, aY);
+      accumulator += angle;
+    }
+    ctx.closePath();
+    ctx.stroke();
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+#radar-map {
+    position: absolute;
+    cursor: pointer;
+    border: 1px solid rgba(110, 110, 110, 0.8);
+    border-radius: 10px;
+}
+
+#radar-wrap {
+    position: relative;
+    box-sizing: border-box;
+    width: 400px;
+    height: 400px;
+}
+
+#floating-panel {
+    font: 14px / 21px "Microsoft YaHei";
+    position: absolute;
+    z-index: 9999999;
+    top: 145px;
+    left: 29px;
+    display: none;
+    padding: 5px;
+    transition: left 0.4s cubic-bezier(0.23, 1, 0.32, 1) 0s, top 0.4s cubic-bezier(0.23, 1, 0.32, 1) 0s;
+    white-space: nowrap;
+    pointer-events: none;
+    color: rgb(255, 255, 255);
+    border-width: 0;
+    border-style: solid;
+    border-color: rgb(51, 51, 51);
+    border-radius: 4px;
+    background-color: rgba(50, 50, 50, 0.7);
+}
+
+#app {
+    display: flex;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+}

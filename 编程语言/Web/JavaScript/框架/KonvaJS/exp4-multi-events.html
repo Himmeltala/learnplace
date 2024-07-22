@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>exp4-multi-events</title>
+  <script src="https://unpkg.com/konva@9/konva.min.js"></script>
+</head>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background-color: #f0f0f0;
+    }
+</style>
+<body>
+<div id="container"></div>
+<script>
+  const stage = new Konva.Stage({
+    container: "container",
+    width: window.innerWidth,
+    height: window.innerHeight
+  });
+
+  const layer = new Konva.Layer();
+
+  const circle = new Konva.Circle({
+    x: stage.width() / 2,
+    y: stage.height() / 2 + 10,
+    radius: 70,
+    fill: "red",
+    stroke: "black",
+    strokeWidth: 4
+  });
+
+  circle.on("mouseover mousedown mouseup", function(e) {
+    console.log(e);
+  });
+
+  layer.add(circle);
+  stage.add(layer);
+</script>
+</body>
+</html>

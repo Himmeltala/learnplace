@@ -1,0 +1,110 @@
+* {
+    -moz-user-select: none; /*mozilar*/
+    -webkit-user-select: none; /*webkit*/
+    -ms-user-select: none; /*IE*/
+    user-select: none;
+}
+
+ul {
+    margin: 0;
+    padding: 0 0 0 10px;
+}
+
+li {
+    list-style: none;
+}
+
+.tree-ocx-tip {
+    padding: 8px 4px;
+}
+
+.tree-ocx-tip:hover {
+    transition: 0.5s;
+    background-color: rgba(234, 234, 234, 0.7);
+}
+
+.fold-icon,
+.unfold-icon {
+    margin-right: 8px;
+}
+
+.tree-ocx-tip-wrap {
+    display: flex;
+    justify-content: start;
+    align-content: center;
+    align-items: center;
+}
+
+.tree-ocx-tip-normal {
+    padding-left: 26px;
+}
+
+.tree-ocx-li {
+    --tree-ocx-li-height: 0;
+    --tree-ocx-tip-height: 0;
+}
+
+.tree-ocx-li-enable-fold {
+    cursor: pointer;
+}
+
+.tree-ocx-ul-enable-fold {
+    display: none;
+}
+
+.tree-ocx-li-enable-fold-active {
+    animation: tree-ocx-li-fold-animation 0.5s ease-in-out 0s;
+}
+
+@keyframes tree-ocx-li-fold-animation {
+    from {
+        height: var(--tree-ocx-tip-height);
+    }
+
+    to {
+        height: calc(var(--tree-ocx-li-height) + var(--tree-ocx-tip-height));
+    }
+}
+
+.tree-ocx-li-unfold-active {
+    animation: tree-ocx-li-unfold-animation 0.5s ease-in-out 0s;
+}
+
+@keyframes tree-ocx-li-unfold-animation {
+    from {
+        height: calc(var(--tree-ocx-li-height) + var(--tree-ocx-tip-height));
+    }
+
+    to {
+        height: var(--tree-ocx-tip-height);
+    }
+}
+
+.tree-ocx-ul-enable-fold-active {
+    display: block;
+    animation: tree-ocx-ul-fold-animation 1s ease-in-out 0s;
+}
+
+@keyframes tree-ocx-ul-fold-animation {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.tree-ocx-ul-unfold-active {
+    animation: tree-ocx-ul-unfold-animation 1s ease-in-out 0s;
+}
+
+@keyframes tree-ocx-ul-unfold-animation {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>demo1-canvas-line</title>
+  <script src="https://unpkg.com/konva@9/konva.min.js"></script>
+</head>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background-color: #f0f0f0;
+    }
+</style>
+<body>
+<div id="container"></div>
+</body>
+<script>
+  const stage = new Konva.Stage({
+    container: "container",
+    width: window.innerWidth,
+    height: window.innerHeight
+  });
+
+  const layer = new Konva.Layer();
+
+  let lastLine,
+    isPainting = false;
+
+  stage.on("mousedown touchstart", function(e) {
+    const pos = stage.getPointerPosition();
+    isPainting = true;
+    lastLine = new Konva.Line({
+      stroke: "#df4b26",
+      strokeWidth: 5,
+      globalCompositeOperation: "source-over",
+      lineCap: "round",
+      lineJoin: "round",
+      // 添加两次 x 和 y，否则绘制的 Line 不会显示
+      points: [pos.x, pos.y, pos.x, pos.y]
+    });
+
+    layer.add(lastLine);
+  });
+
+  stage.on("mouseup touchup", function() {
+    isPainting = false;
+  });
+
+  stage.on("mousemove touchmove", function(e) {
+    e.evt.preventDefault();
+
+    if (lastLine && isPainting) {
+      const pos = stage.getPointerPosition();
+      // 在这个 Line 的 points 数组中，拼接数组，并覆盖原本的 points，从而实现线条绘制功能。
+      // const newPos = lastLine.points().concat([pos.x, pos.y]);
+      // lastLine.points(newPos);
+      lastLine.points([...lastLine.points(), ...[pos.x, pos.y]]);
+    }
+  });
+
+  stage.add(layer);
+</script>
+</html>

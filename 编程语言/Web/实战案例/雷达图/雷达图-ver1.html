@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta content="IE=edge" http-equiv="X-UA-Compatible" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.js"></script>
+  <title>拖动侧边栏</title>
+  <style>
+      #radar-map {
+          cursor: pointer;
+          position: absolute;
+          border: 1px solid rgba(110, 110, 110, 0.8);
+          border-radius: 10px;
+      }
+
+      #radar-wrap {
+          width: 600px;
+          height: 600px;
+          box-sizing: border-box;
+          position: relative;
+      }
+
+      #floating-panel {
+          position: absolute;
+          display: none;
+          border-style: solid;
+          white-space: nowrap;
+          z-index: 9999999;
+          transition: left 0.4s cubic-bezier(0.23, 1, 0.32, 1) 0s, top 0.4s cubic-bezier(0.23, 1, 0.32, 1) 0s;
+          background-color: rgba(50, 50, 50, 0.7);
+          border-width: 0;
+          border-color: rgb(51, 51, 51);
+          border-radius: 4px;
+          color: rgb(255, 255, 255);
+          font: 14px / 21px "Microsoft YaHei";
+          padding: 5px;
+          left: 29px;
+          top: 145px;
+          pointer-events: none;
+      }
+  </style>
+</head>
+<body>
+<div id="radar-wrap">
+  <canvas height="600" id="radar-map" width="600">Your browser version is too late.</canvas>
+  <div id="floating-panel"></div>
+</div>
+<script>
+  let data = [
+    {
+      title: "js",
+      star: 4
+    },
+    {
+      title: "ts",
+      star: 2
+    },
+    {
+      title: "html",
+      star: 4
+    },
+    {
+      title: "css",
+      star: 4
+    },
+    {
+      title: "vue",
+      star: 4
+    },
+    {
+      title: "uniapp",
+      star: 4
+    },
+    {
+      title: "java",
+      star: 2
+    },
+    {
+      title: "flutter",
+      star: 3
+    },
+    {
+      title: "dart",
+      star: 4
+    },
+    {
+      title: "python",
+      star: 0
+    }
+  ];
+
+  function drawFloatingPanel(axis) {
+    let floatingPanel = $("#floating-panel");
+    let timeout = null;
+    $("#radar-map").on({
+      mousemove: function(e) {
+        if (timeout != null) clearTimeout(timeout);
+        timeout = setTimeout(() => {
+          axis.forEach((value, index) => {
+            if (
+              value.x >= e.offsetX - 5 &&
+              value.x < e.offsetX + 5 &&
+              value.y >= e.offsetY - 5 &&
+              value.y < e.offsetY + 5
+            ) {
+              $(floatingPanel).css({
+                display: "block",
+                left: `${e.offsetX}px`,
+                top: `${e.offsetY}px`
+              });
+              $(floatingPanel).empty().append(`
+                    <div class="tech">技术：${value.title}</div>
+                    <div class="star">掌握程度：${value.star} 颗星</div>
+                  `);
+            }
+          });
+        }, 50);
+      },
+      mouseleave: function(e) {
+        $(floatingPanel).css({ display: "none" });
+      }
+    });
+  }
+
+  function calcDataAreaTopX(areaTopLayer, axis, radarX, currentPoint) {
+    if (areaTopLayer < 0) {
+      return radarX;
+    } else {
+      return axis[areaTopLayer].coords[currentPoint].x;
+    }
+  }
+
+  function calcDataAreaTopY(areaTopLayer, axis, radarY, currentPoint) {
+    if (areaTopLayer < 0) {
+      return radarY;
+    } else {
+      return axis[areaTopLayer].coords[currentPoint].y;
+    }
+  }
+
+  function drawDataAreaTop(axis, currentPoint, radarX, radarY, ctx, data) {
+    let x = calcDataAreaTopX(data[currentPoint].star - 1, axis, radarX, currentPoint);
+    let y = calcDataAreaTopY(data[currentPoint].star - 1, axis, radarY, currentPoint);
+    if (currentPoint === 0) {
+      ctx.moveTo(x, y);
+    } else {
+      ctx.lineTo(x, y);
+    }
+    return { x: x, y: y };
+  }
+
+  function drawDataArea(radarMapTotalSides, axis, radarX, radarY, ctx, data) {
+    let areaTopAxis = []; // 数据区域的所有点坐标
+    ctx.beginPath();
+    for (let i = 0; i < radarMapTotalSides; i++) {
+      let { x, y } = drawDataAreaTop(axis, i, radarX, radarY, ctx, data);
+      areaTopAxis.push({ title: data[i].title, star: data[i].star, x: x, y: y });
+    }
+    ctx.closePath();
+    ctx.strokeStyle = "rgba(68,226,155, 1)";
+    ctx.stroke();
+    ctx.fillStyle = "rgba(81,182,137, 0.6)";
+    ctx.fill();
+    return areaTopAxis;
+  }
+
+  /**
+   * @param data 顺时针开始最外层每一个点的文本；
+   * @param axios 最外层多边形每一个点的坐标信息；
+   * @param currentPoint 当前循环到的多边形的一个点坐标；
+   * @param radarX 雷达图中心坐标的 x 坐标轴。
+   */
+  function drawPointText(axis, currentPoint, radarX, ctx, data) {
+    ctx.font = `16px Georgia`;
+    if (axis[currentPoint].x <= radarX) {
+      ctx.textAlign = "right";
+    } else {
+      ctx.textAlign = "left";
+    }
+    ctx.fillText(data[currentPoint].title, axis[currentPoint].x, axis[currentPoint].y);
+  }
+
+  function drawStria(radarMapTotalSides, axis, radarX, radarY, ctx, data) {
+    let coords = axis[axis.length - 1].coords;
+    for (let i = 0; i < radarMapTotalSides; i++) {
+      ctx.beginPath();
+      ctx.moveTo(radarX, radarY);
+      ctx.lineTo(coords[i].x, coords[i].y);
+      ctx.closePath();
+      ctx.stroke();
+      drawPointText(coords, i, radarX, ctx, data);
+    }
+  }
+
+  function calcPolygonX(radarX, radius, increaseAngle) {
+    return radarX + radius * Math.cos(increaseAngle);
+  }
+
+  function calcPolygonY(radarY, radius, increaseAngle) {
+    return radarY - radius * Math.sin(increaseAngle);
+  }
+
+  /**
+   * @param radarMapTotalSides 雷达图有多少面，5 就是五面
+   * @param radius 每一层圆的半径长度，步数
+   * @param radarX 雷达图圆心在 Canvas 的 x 轴坐标
+   * @param radarY 雷达图圆心在 Canvas 的 y 轴坐标
+   * @param ctx Canvas 对象
+   */
+  function drawPolygon(radarMapTotalSides, currentPolygonLayer, radius, radarX, radarY, axis, ctx) {
+    let averageAngle = (Math.PI * 2) / radarMapTotalSides;
+    let increaseAngle = 0;
+    let targetX, targetY;
+
+    ctx.beginPath();
+    axis.push({ layer: currentPolygonLayer, coords: [] }); // 保存点坐标的数组
+    for (let i = 0; i < radarMapTotalSides; i++) {
+      targetX = calcPolygonX(radarX, radius, increaseAngle);
+      targetY = calcPolygonY(radarY, radius, increaseAngle);
+      ctx.lineTo(targetX, targetY);
+      increaseAngle += averageAngle;
+      axis[currentPolygonLayer].coords.push({ x: targetX, y: targetY });
+    }
+    ctx.closePath();
+    ctx.stroke();
+  }
+
+  /**
+   * @param radarLayers 雷达图层数
+   * @param polygonPerStep 每一层圆的半径长度，步数
+   * @param radarMapTotalSides 雷达图有多少面，5 就是五面
+   * @param radarX 雷达图圆心在 Canvas 的 x 轴坐标
+   * @param radarY 雷达图圆心在 Canvas 的 y 轴坐标
+   * @param ctx Canvas 对象
+   */
+  function drawRadarMap(radarLayers, polygonPerStep, radarMapTotalSides, radarX, radarY, ctx, data) {
+    let radius = polygonPerStep;
+    let axis = []; // 用于保存每一个多边形的每一个点坐标
+
+    for (let j = 0; j < radarLayers; j++) {
+      drawPolygon(radarMapTotalSides, j, radius, radarX, radarY, axis, ctx);
+      radius = radius + polygonPerStep;
+    }
+
+    drawStria(radarMapTotalSides, axis, radarX, radarY, ctx, data);
+    let topCoords = drawDataArea(radarMapTotalSides, axis, radarX, radarY, ctx, data);
+    drawFloatingPanel(topCoords);
+  }
+
+  let canvas = document.getElementById("radar-map");
+  let ctx = canvas.getContext("2d");
+  drawRadarMap(5, 40, 10, 300, 300, ctx, data);
+</script>
+</body>
+</html>

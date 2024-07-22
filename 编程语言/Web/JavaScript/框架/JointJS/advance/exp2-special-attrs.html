@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>exp2-special-attrs</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/jointjs/3.7.4/joint.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<!-- content -->
+<div id="paper-custom-elements"></div>
+
+<!-- dependencies -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.4.1/backbone.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jointjs/3.7.4/joint.js"></script>
+
+<!-- code -->
+<script>
+  const namespace = joint.shapes;
+  const graph = new joint.dia.Graph({}, { cellNamespace: namespace });
+  const paper = new joint.dia.Paper({
+    el: document.getElementById("paper-custom-elements"),
+    model: graph,
+    width: 1000,
+    height: 400,
+    gridSize: 10,
+    drawGrid: true,
+    background: {
+      color: "rgba(0, 255, 0, 0.3)"
+    },
+    cellViewNamespace: namespace
+  });
+
+  var CustomTextElement = joint.dia.Element.define(
+    "examples.CustomTextElement",
+    {
+      attrs: {
+        label: {
+          textAnchor: "middle",
+          textVerticalAnchor: "middle",
+          fontSize: 48
+        },
+        e: {
+          strokeWidth: 1,
+          stroke: "#000000",
+          fill: "rgba(255,0,0,0.3)"
+        },
+        r: {
+          strokeWidth: 1,
+          stroke: "#000000",
+          fill: "rgba(0,255,0,0.3)"
+        },
+        c: {
+          strokeWidth: 1,
+          stroke: "#000000",
+          fill: "rgba(0,0,255,0.3)"
+        },
+        outline: {
+          ref: "label",
+          x: "-calc(0.5*w)",
+          y: "-calc(0.5*h)",
+          width: "calc(w)",
+          height: "calc(h)",
+          strokeWidth: 1,
+          stroke: "#000000",
+          // 表示一个由长度为10的实线和长度为5的虚线交替组成的虚线样式。
+          strokeDasharray: "10 5",
+          fill: "none"
+        }
+      }
+    },
+    {
+      markup: [
+        {
+          tagName: "ellipse",
+          selector: "e"
+        },
+        {
+          tagName: "rect",
+          selector: "r"
+        },
+        {
+          tagName: "circle",
+          selector: "c"
+        },
+        {
+          tagName: "text",
+          selector: "label"
+        },
+        {
+          tagName: "rect",
+          selector: "outline"
+        }
+      ]
+    }
+  );
+
+  var element = new CustomTextElement();
+  element.position(400, 200);
+  element.attr({
+    label: {
+      text: "Hello, World!"
+    },
+    e: {
+      ref: "label",
+      // rx 属性用于定义水平轴向的圆角半径尺寸。<ellipse> 和 <rect> 两个基本图形使用了这个属性。
+      rx: "calc(0.5*w)",
+      ry: "calc(0.25*h)",
+      // cx 属性定义一个中心点的 x 轴坐标。
+      cx: "-calc(0.5*w)",
+      cy: "-calc(0.25*h)"
+    },
+    r: {
+      ref: "label",
+      x: "calc(0.5*w-10)",
+      y: "calc(0.5*h-10)",
+      width: "calc(0.5*w)",
+      height: "calc(0.5*h)"
+    },
+    c: {
+      ref: "label",
+      r: "calc(0.5*d)"
+    }
+  });
+
+  graph.addCells(element);
+</script>
+</body>
+</html>

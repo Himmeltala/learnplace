@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta content="IE=edge" http-equiv="X-UA-Compatible" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>exp-2</title>
+</head>
+<style>
+    svg {
+        border: solid 1px black;
+    }
+</style>
+<body>
+<svg height="600" id="svg" width="1000" xmlns="http://www.w3.org/2000/svg">
+  <g>
+    <rect fill="blue" height="80" id="rect1" width="80" x="0" y="0" />
+  </g>
+  <g>
+    <path d="M80,40 L180,40" fill="none" id="path1" stroke="black" stroke-width="2"></path>
+  </g>
+  <g>
+    <rect fill="red" height="80" id="rect2" width="80" x="180" y="0" />
+  </g>
+  <g>
+    <path d="M260,40 L360,40" fill="none" id="path2" stroke="black" stroke-width="2"></path>
+  </g>
+  <g>
+    <rect fill="green" height="80" id="rect3" width="80" x="360" y="0" />
+  </g>
+</svg>
+</body>
+
+<script>
+  const svg = document.getElementById("svg");
+  const rect1 = document.getElementById("rect1");
+  const rect2 = document.getElementById("rect2");
+  const rect3 = document.getElementById("rect3");
+  const path1 = document.getElementById("path1");
+  const path2 = document.getElementById("path2");
+
+  // 需要记录 path 的左右左边
+
+  const pathPosition1 = {
+    left: {
+      x: 80,
+      y: 40
+    },
+    right: {
+      x: 180,
+      y: 40
+    }
+  };
+
+  const pathPosition2 = {
+    left: {
+      x: 260,
+      y: 40
+    },
+    right: {
+      x: 360,
+      y: 40
+    }
+  };
+
+  //
+  // 1
+
+  function onMouseMoveSvg1(e) {
+    const x = e.offsetX - 40;
+    const y = e.offsetY - 40;
+    pathPosition1.left.x = x + 80;
+    pathPosition1.left.y = y + 40;
+    rect1.setAttribute("x", x);
+    rect1.setAttribute("y", y);
+    path1.setAttribute(
+      "d",
+      `M${pathPosition1.left.x},${pathPosition1.left.y} L${pathPosition1.right.x},${pathPosition1.right.y}`
+    );
+  }
+
+  function onMouseDownRect1() {
+    svg.addEventListener("mousemove", onMouseMoveSvg1);
+  }
+
+  function onMouseUpRect1() {
+    svg.removeEventListener("mousemove", onMouseMoveSvg1);
+  }
+
+  rect1.addEventListener("mouseup", onMouseUpRect1);
+  rect1.addEventListener("mousedown", onMouseDownRect1);
+
+  //
+  // 2
+
+  function onMouseMoveSvg2(e) {
+    const x = e.offsetX - 40;
+    const y = e.offsetY - 40;
+    pathPosition1.right.x = x;
+    pathPosition1.right.y = y + 40;
+    rect2.setAttribute("x", x);
+    rect2.setAttribute("y", y);
+    path1.setAttribute(
+      "d",
+      `M${pathPosition1.left.x},${pathPosition1.left.y} L${pathPosition1.right.x},${pathPosition1.right.y}`
+    );
+
+    pathPosition2.left.x = x + 80;
+    pathPosition2.left.y = y + 40;
+
+    path2.setAttribute(
+      "d",
+      `M${pathPosition2.left.x},${pathPosition2.left.y} L${pathPosition2.right.x},${pathPosition2.right.y}`
+    );
+  }
+
+  function onMouseDownRect2() {
+    svg.addEventListener("mousemove", onMouseMoveSvg2);
+  }
+
+  function onMouseUpRect2() {
+    svg.removeEventListener("mousemove", onMouseMoveSvg2);
+  }
+
+  rect2.addEventListener("mouseup", onMouseUpRect2);
+  rect2.addEventListener("mousedown", onMouseDownRect2);
+
+  //
+  // 3
+
+  function onMouseMoveSvg3(e) {
+    const x = e.offsetX - 40;
+    const y = e.offsetY - 40;
+    pathPosition2.right.x = x;
+    pathPosition2.right.y = y + 40;
+    rect3.setAttribute("x", x);
+    rect3.setAttribute("y", y);
+    path2.setAttribute(
+      "d",
+      `M${pathPosition2.left.x},${pathPosition2.left.y} L${pathPosition2.right.x},${pathPosition2.right.y}`
+    );
+  }
+
+  function onMouseDownRect3() {
+    svg.addEventListener("mousemove", onMouseMoveSvg3);
+  }
+
+  function onMouseUpRect3() {
+    svg.removeEventListener("mousemove", onMouseMoveSvg3);
+  }
+
+  rect3.addEventListener("mouseup", onMouseUpRect3);
+  rect3.addEventListener("mousedown", onMouseDownRect3);
+</script>
+</html>

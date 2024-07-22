@@ -1,0 +1,14 @@
+.hoverTime {
+    top: -20px;
+    position: absolute;
+}
+
+.cursor {
+    width: 2px;
+    z-index: 999;
+    height: 200px;
+    position: absolute;
+    top: 0;
+    background-color: red; /* 光标的颜色 */
+    pointer-events: none; /* 禁用光标元素的鼠标事件 */
+}

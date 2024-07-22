@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>树形控件</title>
+  <link href="css/index.css" rel="stylesheet" />
+  <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.js"></script>
+</head>
+<body>
+<div id="app">
+  <div class="tree-ocx"></div>
+</div>
+<script src="js/main.js"></script>
+<script src="js/data.js"></script>
+<script type="text/javascript">
+  $("#app > .tree-ocx").append(rendTreeOcx(treeOcxData));
+  foldOrUnFoldTree();
+</script>
+</body>
+</html>

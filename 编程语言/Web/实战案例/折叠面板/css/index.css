@@ -1,0 +1,46 @@
+#app {
+    width: 500px;
+}
+
+.collapse {
+    margin: 10px 0;
+    border-radius: 5px;
+    border: 1px solid #aaaaaa;
+    padding: 10px;
+}
+
+.collapse > .header {
+    padding: 5px 0;
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    justify-content: space-between;
+}
+
+.collapse > .header > .content {
+    width: 95%;
+}
+
+.collapse > .header > .ctrl-icon {
+    width: 3%;
+}
+
+.collapse > .header > .ctrl-icon svg {
+    transition-duration: 0.35s;
+}
+
+.collapse > .body {
+    display: none;
+}
+
+.collapse > .unfold-collapse {
+    display: block !important;
+    margin-top: 5px;
+    border-top: 1px solid #cccccc;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.collapse > .fold-collapse {
+    display: none !important;
+}

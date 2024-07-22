@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>打字机效果</title>
+  <style>
+      #tw {
+          overflow: hidden;
+          border-right: 0.15rem solid var(--bleu-theme-color-primary);
+          animation: blink 0.8s infinite;
+      }
+
+      @keyframes blink {
+          from {
+              border-color: transparent;
+          }
+          to {
+              border-color: var(--bleu-theme-color-primary);
+          }
+      }
+
+      @keyframes wave {
+          0% {
+              transform: scale(0);
+              opacity: 1;
+          }
+          100% {
+              transform: scale(2);
+              opacity: 0;
+          }
+      }
+  </style>
+</head>
+<body>
+<div class="tw" id="tw"></div>
+<script src="./index.js"></script>
+<script>
+  const texts = [
+    "你好，很高兴认识你，接下来将自我介绍，",
+    "我是一个 Web <Developer />，",
+    "技术栈：Vue.js、React.js，",
+    "喜欢日漫、游戏，",
+    "座右铭：Time tick away, dream faded away!"
+  ];
+
+  const tw = new TypeWriter({ el: "tw", texts });
+  tw.type();
+</script>
+</body>
+</html>

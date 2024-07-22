@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>警察抓小偷</title>
+  <!-- Import style -->
+  <link
+    href="//cdn.jsdelivr.net/npm/element-plus/dist/index.css"
+    rel="stylesheet"
+  />
+  <!-- Import Vue 3 -->
+  <script src="//cdn.jsdelivr.net/npm/vue@3"></script>
+  <!-- Import component library -->
+  <script src="//cdn.jsdelivr.net/npm/element-plus"></script>
+  <link href="index.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div>
+  <div style="margin-bottom: 20px">
+    <button id="save-barrier-btn">保存本关卡</button>
+    <button id="reset-barrier-btn" style="margin-right: 10px">重置本关卡</button>
+    <button disabled id="next-barrier-btn" style="margin-right: 10px">下一个关卡</button>
+    <span id="current-barrier-count">当前关卡数：1</span>
+  </div>
+</div>
+<div id="game">
+  <div id="terminal-modal"></div>
+</div>
+<div style="margin-top: 20px">
+  <div style="margin-bottom: 5px">参与方：<span style="color: green">绿色</span>代表警察，<span
+    style="color: red">红色</span>代表小偷，<span style="color: #a1a1a1">灰色</span>代表可点击和小偷可移动的位置。
+  </div>
+  <div>
+    游戏规则：小偷不能走<span style="color: green">绿色</span>的位置，它只能随机选择四周的其中一个<span
+    style="color: #a1a1a1">灰色</span>位置进行移动，且一次只能移动一个位置。直到你围住<span
+    style="color: red">红色</span>方块即可游戏获胜。
+  </div>
+</div>
+<script src="index.js"></script>
+<script>
+  let current = 0;
+
+  const configs = [
+    {
+      grid: [
+        { count: 0, leftStart: 0, topStart: 0 },
+        { count: 10, leftStart: 50, topStart: 50 },
+        { count: 10, leftStart: 100, topStart: 100 },
+        { count: 10, leftStart: 100, topStart: 150 },
+        { count: 8, leftStart: 50, topStart: 200 },
+        { count: 5, leftStart: 150, topStart: 250 },
+        { count: 5, leftStart: 50, topStart: 300 },
+        { count: 7, leftStart: 50, topStart: 350 },
+        { count: 10, leftStart: 50, topStart: 400 }
+      ],
+      barrier: 0,
+      initial: {
+        width: 900,
+        height: 500,
+        cubeHW: 50,
+        thief: { left: 250, top: 150 }
+      }
+    },
+    {
+      grid: [
+        { count: 0, leftStart: 0, topStart: 0 },
+        { count: 5, leftStart: 50, topStart: 50 },
+        { count: 5, leftStart: 100, topStart: 100 },
+        { count: 5, leftStart: 100, topStart: 150 },
+        { count: 8, leftStart: 50, topStart: 200 },
+        { count: 5, leftStart: 150, topStart: 250 },
+        { count: 5, leftStart: 50, topStart: 300 },
+        { count: 7, leftStart: 50, topStart: 350 },
+        { count: 5, leftStart: 50, topStart: 400 }
+      ],
+      barrier: 1,
+      initial: {
+        width: 900,
+        height: 500,
+        cubeHW: 50,
+        thief: { left: 200, top: 150 }
+      }
+    }
+  ];
+
+  const nextBarrierBtn = document.getElementById("next-barrier-btn");
+
+  const game = new Game();
+
+  game._success = function success() {
+    nextBarrierBtn.disabled = false;
+    nextBarrierBtn.onclick = () => {
+      current++;
+      game._config = configs[current];
+      game.initialize();
+      game.closeModal();
+      document.getElementById("current-barrier-count").innerText = `当前关卡数：${configs[current].barrier + 1}`;
+      nextBarrierBtn.disabled = true;
+    };
+  };
+
+  game._error = function error() {
+    nextBarrierBtn.disabled = true;
+  };
+
+  document.getElementById("save-barrier-btn").onclick = () => {
+    localStorage.setItem("game-config", JSON.stringify(configs[current]));
+  };
+
+  document.getElementById("reset-barrier-btn").onclick = () => {
+    game._config = configs[current];
+    game.initialize();
+    game.closeModal();
+    document.getElementById("current-barrier-count").innerText = `当前关卡数：${configs[current].barrier + 1}`;
+    nextBarrierBtn.disabled = true;
+  };
+
+  window.onload = () => {
+    const config = JSON.parse(localStorage.getItem("game-config"));
+    if (config) {
+      current = config.barrier;
+    }
+
+    game._config = configs[current];
+    game.initialize();
+    game.closeModal();
+    document.getElementById("current-barrier-count").innerText = `当前关卡数：${configs[current].barrier + 1}`;
+    nextBarrierBtn.disabled = true;
+  };
+</script>
+</body>
+</html>

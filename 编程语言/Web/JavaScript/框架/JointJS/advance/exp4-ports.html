@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>exp4-ports</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/jointjs/3.7.4/joint.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<!-- content -->
+<div id="myholder"></div>
+
+<!-- dependencies -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.4.1/backbone.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jointjs/3.7.4/joint.js"></script>
+
+<!-- code -->
+<script>
+  const namespace = joint.shapes;
+  const graph = new joint.dia.Graph({}, { cellNamespace: namespace });
+  const paper = new joint.dia.Paper({
+    el: document.getElementById("myholder"),
+    width: 1000,
+    height: 500,
+    gridSize: 1,
+    model: graph,
+    gridSize: 10,
+    drawGrid: true,
+    background: {
+      color: "rgba(0, 255, 0, 0.3)"
+    },
+    cellViewNamespace: namespace,
+    linkPinning: false // Prevent link being dropped in blank paper area
+  });
+
+  const port = {
+    attrs: {
+      portBody: {
+        magnet: true,
+        width: 16,
+        height: 16,
+        x: -8,
+        y: -8,
+        fill: "#03071E"
+      },
+      label: {
+        text: "port"
+      }
+    },
+    label: {
+      position: {
+        name: "left"
+      },
+      markup: [
+        {
+          tagName: "text",
+          selector: "label"
+        }
+      ]
+    },
+    markup: [
+      {
+        tagName: "rect",
+        selector: "portBody"
+      }
+    ]
+  };
+
+  var rect = new joint.shapes.standard.Rectangle({
+    position: { x: 275, y: 50 },
+    size: { width: 90, height: 90 },
+    attrs: {
+      body: {
+        fill: "#8ECAE6"
+      }
+    }
+    // ports: {
+    //   items: [port] // add a port in constructor
+    // }
+  });
+
+  rect.addPort(port);
+
+  graph.addCells(rect);
+</script>
+</body>
+</html>

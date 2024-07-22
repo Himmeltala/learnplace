@@ -1,0 +1,114 @@
+#cb-chart {
+    width: 940px;
+    height: 140px;
+}
+
+#cb-chart .top-bar {
+    display: flex;
+    height: 20%;
+    width: 100%;
+}
+
+#cb-chart .top-bar .occupation {
+    width: 8%;
+}
+
+#cb-chart .top-bar .months {
+    font-size: 12px;
+    height: 100%;
+    width: 92%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#cb-chart .bottom {
+    display: flex;
+    height: 80%;
+    width: 100%;
+}
+
+#cb-chart .bottom .left-side {
+    width: 8%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#cb-chart .bottom .left-side .week {
+    font-size: 12px;
+}
+
+#cb-chart .bottom .right-side {
+    position: relative;
+    width: 92%;
+    height: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    flex-direction: column;
+    align-content: center;
+    align-items: center;
+}
+
+#cb-chart .bottom .right-side .point {
+    width: var(--point-size);
+    height: var(--point-size);
+    border: 1px solid #FFF;
+    box-sizing: border-box;
+    background-color: white;
+}
+
+.point-hover {
+    cursor: pointer;
+    border: 1px solid #333333 !important;
+}
+
+.point-popup {
+    border-radius: 5px;
+    text-align: center;
+    padding: 5px;
+    box-sizing: border-box;
+    position: absolute;
+    width: 145px;
+    height: 30px;
+    border: 0;
+    z-index: 99;
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.8);
+    background-color: #FFFFFF;
+    box-shadow: 0 0 6px -1px rgb(140 146 163 / 50%);
+}
+
+.point-popup > div {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    display: flex;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+}
+
+.open-point-popup {
+    display: block;
+    animation: OpenPopupAnimation 0.2s ease;
+}
+
+.close-point-popup {
+    display: none;
+}
+
+@keyframes OpenPopupAnimation {
+    0% {
+        transform: scale(0, 0);
+    }
+
+    100% {
+        transform: scale(1, 1);
+    }
+}

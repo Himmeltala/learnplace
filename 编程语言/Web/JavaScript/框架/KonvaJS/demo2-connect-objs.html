@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>demo2-connect-objs</title>
+  <script src="https://unpkg.com/konva@9/konva.min.js"></script>
+  <style>
+      body {
+          margin: 0;
+          padding: 0;
+          overflow: hidden;
+          background-color: #f0f0f0;
+      }
+  </style>
+</head>
+<body>
+<div id="container"></div>
+<script>
+  const stage = new Konva.Stage({
+    container: "container",
+    width: window.innerWidth,
+    height: window.innerHeight
+  });
+
+  const layer = new Konva.Layer();
+  stage.add(layer);
+
+  const max = 5;
+
+  function generateTargets() {
+    let rs = [];
+    while (rs.length < max) {
+      rs.push({
+        id: "target-" + rs.length
+      });
+    }
+    return rs;
+  }
+
+  function generateConnectors() {
+    let rs = [];
+    while (rs.length < max) {
+      let from = "target-" + Math.floor(Math.random() * targets.length);
+      let to = "target-" + Math.floor(Math.random() * targets.length);
+      if (from === to) {
+        // 跳过当前 while 的剩余代码
+        continue;
+      }
+      rs.push({
+        id: "connector-" + rs.length,
+        from: from,
+        to: to
+      });
+    }
+    return rs;
+  }
+
+  function calcConnectorPoints(from, to) {
+    const dx = to.x() - from.x();
+    const dy = to.y() - from.y();
+    let angle = Math.atan2(-dy, dx);
+
+    return [
+      from.x() + -from.radius() * Math.cos(angle + Math.PI),
+      from.y() + from.radius() * Math.sin(angle + Math.PI),
+      to.x() + -to.radius() * Math.cos(angle),
+      to.y() + to.radius() * Math.sin(angle)
+    ];
+  }
+
+  function updateConnectors() {
+    connectors.forEach(connector => {
+      const arrowLine = layer.findOne("#" + connector.id);
+      const fromNode = layer.findOne("#" + connector.from);
+      const toNode = layer.findOne("#" + connector.to);
+
+      const points = calcConnectorPoints(fromNode, toNode);
+
+      arrowLine.points(points);
+    });
+  }
+
+  const targets = generateTargets();
+  const connectors = generateConnectors();
+
+  connectors.forEach(connector => {
+    const arrowLine = new Konva.Arrow({
+      id: connector.id,
+      stroke: "black",
+      fill: "black"
+    });
+    layer.add(arrowLine);
+  });
+
+  targets.forEach(target => {
+    const circle = new Konva.Circle({
+      id: target.id,
+      fill: Konva.Util.getRandomColor(),
+      radius: 20 + Math.random() * 20,
+      shadowBlur: 10,
+      draggable: true,
+      opacity: 0.5,
+      x: stage.width() * Math.random(),
+      y: stage.height() * Math.random()
+    });
+
+    const text = new Konva.Text({
+      text: target.id,
+      x: circle.x(),
+      y: circle.y()
+    });
+
+    const group = new Konva.Group();
+
+    circle.on("dragmove", e => {
+      text.x(circle.x());
+      text.y(circle.y());
+
+      updateConnectors();
+    });
+
+    group.add(circle);
+    group.add(text);
+    layer.add(group);
+  });
+
+  // 绘制坐标轴线和刻度
+  function drawAxis() {
+    const width = stage.width();
+    const height = stage.height();
+
+    // 绘制 x 轴线
+    const xAxis = new Konva.Line({
+      points: [0, 0, width, 0],
+      stroke: "black",
+      strokeWidth: 5
+    });
+
+    // 绘制 y 轴线
+    const yAxis = new Konva.Line({
+      points: [0, 0, 0, height],
+      stroke: "black",
+      strokeWidth: 5
+    });
+
+    // 绘制 x 轴刻度
+    for (let x = 0; x < width; x += width / 15) {
+      const xTick = new Konva.Line({
+        points: [x, 0, x, 10],
+        stroke: "black"
+      });
+
+      const xText = new Konva.Text({
+        x: x,
+        y: 15,
+        text: x.toFixed(0),
+        fill: "black"
+      });
+
+      layer.add(xText);
+      layer.add(xTick);
+    }
+
+    // 绘制 y 轴刻度
+    for (let y = 0; y < height; y += height / 15) {
+      const yTick = new Konva.Line({
+        points: [0, y, 10, y],
+        stroke: "black"
+      });
+
+      const yText = new Konva.Text({
+        x: 15,
+        y: y,
+        text: y.toFixed(0),
+        fill: "black"
+      });
+
+      layer.add(yText);
+      layer.add(yTick);
+    }
+
+    layer.add(xAxis);
+    layer.add(yAxis);
+  }
+
+  drawAxis();
+
+  updateConnectors();
+</script>
+</body>
+</html>

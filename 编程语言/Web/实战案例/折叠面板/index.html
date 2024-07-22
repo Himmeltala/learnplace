@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>折叠面板</title>
+  <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.js"></script>
+  <link href="css/index.css" rel="stylesheet" />
+</head>
+<body>
+<div id="app">
+  <div class="collapse">
+    <div class="header">
+      <!-- header wrapper-->
+      <div class="content">fold or unfold the collapse component.</div>
+      <div class="ctrl-icon">
+        <svg class="icon" height="12" viewBox="0 0 1024 1024" width="12" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M676.1 512L232.3 116.1l57.9-51.7L791.7 512 290.2 959.6l-57.9-51.7L676.1 512z"
+            fill="#2c2c2c"></path>
+        </svg>
+      </div>
+    </div>
+    <div class="body" data-is-fold="false">
+      <!-- content wrapper -->
+      <div class="content">hello typescript!</div>
+    </div>
+  </div>
+  <div class="collapse">
+    <div class="header">
+      <!-- header wrapper-->
+      <div class="content">fold or unfold the collapse component.</div>
+      <div class="ctrl-icon">
+        <svg class="icon" height="12" viewBox="0 0 1024 1024" width="12" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M676.1 512L232.3 116.1l57.9-51.7L791.7 512 290.2 959.6l-57.9-51.7L676.1 512z"
+            fill="#2c2c2c"></path>
+        </svg>
+      </div>
+    </div>
+    <div class="body" data-is-fold="false">
+      <!-- content wrapper -->
+      <div class="content">hello javascript!</div>
+    </div>
+  </div>
+</div>
+<script src="js/index.js"></script>
+</body>
+</html>

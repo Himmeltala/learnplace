@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta content="IE=edge" http-equiv="X-UA-Compatible" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>拖动侧边栏</title>
+  <style>
+      html,
+      body {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          align-content: center;
+          padding: 0 !important;
+          margin: 0 !important;
+      }
+
+      .container {
+          width: 80vw;
+          height: 100vh;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          align-content: center;
+      }
+
+      .left {
+          position: relative;
+          width: 100px;
+          height: 100%;
+          background-color: rgb(160, 212, 233);
+      }
+
+      .left .resize-bar {
+          position: absolute;
+          top: 0;
+          left: 100px;
+          width: 3px;
+          height: 100%;
+          opacity: 0;
+      }
+
+      .left .resize-bar:hover {
+          cursor: col-resize;
+          opacity: 1;
+          background-color: rgb(210, 85, 50);
+      }
+
+      .right {
+          position: relative;
+          width: 100px;
+          height: 100%;
+          background-color: rgb(36, 107, 214);
+      }
+
+      .right .resize-bar {
+          position: absolute;
+          top: 0;
+          right: 100px;
+          width: 3px;
+          height: 100%;
+          opacity: 0;
+      }
+
+      .right .resize-bar:hover {
+          cursor: col-resize;
+          opacity: 1;
+          background-color: rgb(211, 36, 164);
+      }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="left">
+    <div class="resize-bar"></div>
+  </div>
+  <div class="right">
+    <div class="resize-bar"></div>
+  </div>
+</div>
+<script>
+  const container = document.querySelector(".container");
+  const left = document.querySelector(".left");
+  const leftResizeBar = document.querySelector(".left .resize-bar");
+  const right = document.querySelector(".right");
+  const rightResizeBar = document.querySelector(".right .resize-bar");
+
+  function moveRightBar(event) {
+    setTimeout(() => {
+      // 每拖拽一次就计算一次右侧边栏的 startWidth，它表示右侧边栏左边缘处在 container 的 x 坐标。
+      let startWidth = container.clientWidth - right.clientWidth;
+      // 鼠标移动之后的落脚点 x 坐标是 event.pageX，也可以是 event.clientX。startWidth - 鼠标的 x 坐标可以得到鼠标拖拽了多少 x，即 moveStep。
+      let moveStep = startWidth - event.pageX;
+      // moveStep 加上 container 的左偏量 机上右侧边栏本身的宽度就是我们右侧边栏变化之后的新宽度，即 shiftWidth。
+      let shiftWidth = moveStep + container.offsetLeft + right.clientWidth;
+      right.style.width = shiftWidth + "px";
+      rightResizeBar.style.right = shiftWidth + "px";
+    }, 200);
+  }
+
+  function moveLeftBar(event) {
+    setTimeout(() => {
+      let shiftWidth = event.pageX - container.offsetLeft;
+      left.style.width = shiftWidth + "px";
+      leftResizeBar.style.left = shiftWidth + "px";
+    }, 200);
+  }
+
+  rightResizeBar.addEventListener("mousedown", () => {
+    container.addEventListener("mousemove", moveRightBar);
+  });
+
+  rightResizeBar.addEventListener("mouseup", () => {
+    container.removeEventListener("mousemove", moveRightBar);
+  });
+
+  leftResizeBar.addEventListener("mousedown", () => {
+    container.addEventListener("mousemove", moveLeftBar);
+  });
+
+  leftResizeBar.addEventListener("mouseup", () => {
+    container.removeEventListener("mousemove", moveLeftBar);
+  });
+
+  container.addEventListener("mouseup", () => {
+    container.removeEventListener("mousemove", moveRightBar);
+    container.removeEventListener("mousemove", moveLeftBar);
+  });
+</script>
+</body>
+</html>

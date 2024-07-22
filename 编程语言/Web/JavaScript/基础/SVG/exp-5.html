@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta content="IE=edge" http-equiv="X-UA-Compatible" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>exp-5</title>
+  <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.js"></script>
+</head>
+<style>
+    svg {
+        border: solid 1px black;
+        border-radius: 10px;
+    }
+
+    body {
+        display: flex;
+        justify-content: center;
+    }
+
+    rect {
+        cursor: move;
+    }
+</style>
+
+<body>
+<svg height="600" id="svg" width="1300" xmlns="http://www.w3.org/2000/svg"></svg>
+<div style="margin-left: 10px">
+  <div>
+    <div>Rect 的初始 x</div>
+    <input id="x" placeholder="输入 Rect 的初始 x" value="300" />
+  </div>
+  <div>
+    <div>Rect 的初始 y</div>
+    <input id="y" placeholder="输入 Rect 的初始 y" value="300" />
+  </div>
+  <div>
+    <div>Rect 的十六进制颜色</div>
+    <input id="color" placeholder="输入 Rect 的十六进制颜色" value="black" />
+  </div>
+  <div>
+    <div>Rect 的宽度</div>
+    <input id="width" placeholder="输入 Rect 的宽度" value="100" />
+  </div>
+  <div>
+    <div>Rect 的高度</div>
+    <input id="height" placeholder="输入 Rect 的高度" value="100" />
+  </div>
+  <button onclick="addRect()">添加一个 Rect</button>
+</div>
+</body>
+
+<script>
+  class BleuOnRect {
+    constructor(svg) {
+      this._svg = svg;
+      this.callOnMouseMoveSVG = [];
+    }
+
+    get graph() {
+      return this._rect;
+    }
+
+    get g() {
+      return this._g;
+    }
+
+    get x() {
+      return this._x;
+    }
+
+    get y() {
+      return this._y;
+    }
+
+    get width() {
+      return this._width;
+    }
+
+    get height() {
+      return this._height;
+    }
+
+    position(x, y) {
+      this._x = x;
+      this._y = y;
+    }
+
+    resize(width, height) {
+      this._width = width;
+      this._height = height;
+    }
+
+    attr(value) {
+      this._attrValue = value;
+    }
+
+    /**
+     * 鼠标在 svg 元素内移动。
+     * 1. 鼠标点击 rect 元素时，鼠标的坐标 x 和 y
+     * 2. 鼠标点击 rect 元素时，rect 元素那个时候的左上角 x 和 y
+     * 3. 计算 1 中，鼠标坐标 x 与 2 中 rect 元素左上角的 x，得到一个差值 difX
+     * 4. 计算 2 中，鼠标坐标 y 与 2 中 rect 元素左上角的 y，得到一个差值 difY
+     *
+     * 鼠标移动的 offsetX 要与 difX 进行相减，调整 rect 元素跟鼠标不发生偏移和抖动
+     * 鼠标移动的 offsetY 要与 difY 进行相减，调整 rect 元素跟鼠标不发生偏移和抖动
+     */
+    onMouseMoveSVG = e => {
+      const difX = this._clickX - this._lastX;
+      const difY = this._clickY - this._lastY;
+      this._x = e.offsetX - difX;
+      this._y = e.offsetY - difY;
+      this._g.setAttribute("transform", `translate(${this._x}, ${this._y})`);
+
+      if (this.callOnMouseMoveSVG.length > 0) {
+        for (let i = 0; i < this.callOnMouseMoveSVG.length; i++) {
+          this.callOnMouseMoveSVG[i](this._x, this._y);
+        }
+      }
+    };
+
+    setOnMouseMoveSVG = callback => {
+      this.callOnMouseMoveSVG.push(callback);
+    };
+
+    onMouseDown = e => {
+      this._lastX = this._x;
+      this._lastY = this._y;
+      this._clickX = e.offsetX;
+      this._clickY = e.offsetY;
+      this._svg.addEventListener("mousemove", this.onMouseMoveSVG);
+    };
+
+    onMouseUp = e => {
+      this._svg.removeEventListener("mousemove", this.onMouseMoveSVG);
+    };
+
+    create = () => {
+      this._rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+      this._rect.setAttribute("width", this._width);
+      this._rect.setAttribute("height", this._height);
+      this._rect.setAttribute("fill", this._attrValue.fill);
+
+      this._g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      this._g.setAttribute("transform", `translate(${this._x}, ${this._y})`);
+
+      this._g.appendChild(this._rect);
+      this._svg.appendChild(this._g);
+
+      this.createEvent();
+    };
+
+    createEvent = () => {
+      this._g.addEventListener("mousedown", this.onMouseDown);
+      this._g.addEventListener("mouseup", this.onMouseUp);
+    };
+  }
+
+  class BleuOnLink {
+    constructor(svg) {
+      this._svg = svg;
+      this.isUp = false;
+      this.isDown = false;
+      this.isLeft = false;
+      this.isRight = false;
+      this.compensationX = 0;
+      this.compensationY = 0;
+      this.tolerant = 20;
+      this._g = null;
+      this._path = null;
+      this._source = null;
+      this._target = null;
+      this._sourceX = 0;
+      this._sourceY = 0;
+      this.createPath();
+    }
+
+    createPath = () => {
+      this._g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      this._path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+
+      this._path.setAttribute("cursor", "pointer");
+      this._path.setAttribute("fill", "none");
+      this._path.setAttribute("stroke", "#333333");
+      this._path.setAttribute("stroke-width", "2");
+    };
+
+    source = value => {
+      this._source = value;
+      this._source.setOnMouseMoveSVG((x, y) => {
+        let sourceX = x + this.compensationX;
+        let sourceY = y + this.compensationY;
+        this._path.setAttribute("d", `M${sourceX},${sourceY} L${this._targetX},${this._targetY}`);
+      });
+    };
+
+    target = value => {
+      this._target = value;
+      this._target.setOnMouseMoveSVG((x, y) => {
+        this._targetX = x;
+        this._targetY = y + this._target.height / 2;
+        this._path.setAttribute("d", `M${this._sourceX},${this._sourceY} L${this._targetX},${this._targetY}`);
+      });
+
+      this.initPath();
+    };
+
+    initPath = () => {
+      this._sourceX = this._source.x + this._source.width;
+      this._sourceY = this._source.y + this._source.height / 2;
+      this._targetX = this._target.x;
+      this._targetY = this._target.y + this._target.height / 2;
+      this._path.setAttribute("d", `M${this._sourceX},${this._sourceY} L${this._targetX},${this._targetY}`);
+
+      this._g.appendChild(this._path);
+      this._svg.appendChild(this._g);
+      this.createEvent();
+    };
+
+    isUpArea = () => {
+      return (
+        this._source.x + this._source.width >= this._sourceX &&
+        this._source.x <= this._sourceX &&
+        this._source.y - this.tolerant <= this._sourceY &&
+        this._source.y + this.tolerant >= this._sourceY
+      );
+    };
+
+    isDownArea = () => {
+      return (
+        this._source.x + this._source.width >= this._sourceX &&
+        this._source.x <= this._sourceX &&
+        this._source.y + this._source.height - this.tolerant <= this._sourceY &&
+        this._source.y + this._source.height + this.tolerant >= this._sourceY
+      );
+    };
+
+    isLeftArea = () => {
+      return (
+        this._source.x + this.tolerant >= this._sourceX &&
+        this._source.x - this.tolerant <= this._sourceX &&
+        this._source.y <= this._sourceY &&
+        this._source.y + this._source.height >= this._sourceY
+      );
+    };
+
+    isRightArea = () => {
+      return (
+        this._source.x + this._source.width - this.tolerant <= this._sourceX &&
+        this._source.x + this._source.width + this.tolerant >= this._sourceX &&
+        this._source.y + this._source.height >= this._sourceY &&
+        this._source.y <= this._sourceY
+      );
+    };
+
+    compensate = e => {
+      if (this.isUpArea()) {
+        this.isUp = true;
+        this.compensationX = e.offsetX - this._source.x;
+        this.compensationY = 0;
+      } else if (this.isDownArea()) {
+        this.isDown = true;
+        this.compensationX = e.offsetX - this._source.x;
+        this.compensationY = this._source.height;
+      } else if (this.isLeftArea()) {
+        this.isLeft = true;
+        this.compensationX = 0;
+        this.compensationY = e.offsetY - this._source.y;
+      } else if (this.isRightArea()) {
+        this.isRight = true;
+        this.compensationX = this._source.width;
+        this.compensationY = e.offsetY - this._source.y;
+      }
+    };
+
+    onMouseMoveSVG = e => {
+      this._sourceX = e.offsetX;
+      this._sourceY = e.offsetY;
+      this._path.setAttribute("d", `M${this._sourceX},${this._sourceY} L${this._targetX},${this._targetY}`);
+    };
+
+    onMouseDown = e => {
+      this._svg.addEventListener("mousemove", this.onMouseMoveSVG);
+    };
+
+    onMouseUp = e => {
+      this.compensate(e);
+      this._svg.removeEventListener("mousemove", this.onMouseMoveSVG);
+    };
+
+    createEvent = () => {
+      this._path.addEventListener("mousedown", this.onMouseDown);
+      this._path.addEventListener("mouseup", this.onMouseUp);
+    };
+  }
+
+  const svg = document.getElementById("svg");
+
+  // rect1
+  const rect1 = new BleuOnRect(svg);
+  rect1.position(100, 150);
+  rect1.resize(100, 100);
+  rect1.attr({ fill: "blue" });
+  rect1.create();
+
+  // rect2
+  const rect2 = new BleuOnRect(svg);
+  rect2.position(400, 150);
+  rect2.resize(100, 100);
+  rect2.attr({ fill: "green" });
+  rect2.create();
+
+  // link1
+  const link1 = new BleuOnLink(svg);
+  link1.source(rect1);
+  link1.target(rect2);
+
+  // rect3
+  const rect3 = new BleuOnRect(svg);
+  rect3.position(700, 150);
+  rect3.resize(100, 100);
+  rect3.attr({ fill: "red" });
+  rect3.create();
+
+  // link2
+  const link2 = new BleuOnLink(svg);
+  link2.source(rect2);
+  link2.target(rect3);
+</script>
+
+<script>
+  function addRect() {
+    const x = $("#x").val();
+    const y = $("#y").val();
+    const color = $("#color").val();
+    const width = $("#width").val();
+    const height = $("#height").val();
+
+    const rect = new BleuOnRect(svg);
+    rect.position(x, y);
+    rect.resize(width, height);
+    rect.attr({ fill: color });
+    rect.create();
+  }
+</script>
+</html>

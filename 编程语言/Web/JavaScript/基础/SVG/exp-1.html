@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta content="IE=edge" http-equiv="X-UA-Compatible" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>exp-1</title>
+</head>
+<style>
+    svg {
+        border: solid 1px black;
+    }
+</style>
+<body>
+<svg height="400" id="svg" width="1000" xmlns="http://www.w3.org/2000/svg">
+  <g>
+    <rect fill="blue" height="80" id="rect1" width="80" x="0" y="0" />
+  </g>
+  <g>
+    <path d="M80,40 L180,40" fill="none" id="path1" stroke="black" stroke-width="2"></path>
+  </g>
+  <g>
+    <rect fill="red" height="80" id="rect2" width="80" x="180" y="0" />
+  </g>
+</svg>
+</body>
+
+<script>
+  const svg = document.getElementById("svg");
+  const rect1 = document.getElementById("rect1");
+  const rect2 = document.getElementById("rect2");
+  const path1 = document.getElementById("path1");
+
+  // 需要记录 path 的左右左边
+
+  const pathPosition = {
+    left: {
+      x: 80,
+      y: 40
+    },
+    right: {
+      x: 180,
+      y: 40
+    }
+  };
+
+  //
+  //
+
+  function onMouseMoveSvg1(e) {
+    const x = e.offsetX - 40;
+    const y = e.offsetY - 40;
+    pathPosition.left.x = x + 80;
+    pathPosition.left.y = y + 40;
+    rect1.setAttribute("x", x);
+    rect1.setAttribute("y", y);
+    path1.setAttribute(
+      "d",
+      `M${pathPosition.left.x},${pathPosition.left.y} L${pathPosition.right.x},${pathPosition.right.y}`
+    );
+  }
+
+  function onMouseDownRect1() {
+    svg.addEventListener("mousemove", onMouseMoveSvg1);
+  }
+
+  function onMouseUpRect1() {
+    svg.removeEventListener("mousemove", onMouseMoveSvg1);
+  }
+
+  rect1.addEventListener("mouseup", onMouseUpRect1);
+  rect1.addEventListener("mousedown", onMouseDownRect1);
+
+  //
+  //
+
+  function onMouseMoveSvg2(e) {
+    const x = e.offsetX - 40;
+    const y = e.offsetY - 40;
+    pathPosition.right.x = x;
+    pathPosition.right.y = y + 40;
+    rect2.setAttribute("x", x);
+    rect2.setAttribute("y", y);
+    path1.setAttribute(
+      "d",
+      `M${pathPosition.left.x},${pathPosition.left.y} L${pathPosition.right.x},${pathPosition.right.y}`
+    );
+  }
+
+  function onMouseDownRect2() {
+    svg.addEventListener("mousemove", onMouseMoveSvg2);
+  }
+
+  function onMouseUpRect2() {
+    svg.removeEventListener("mousemove", onMouseMoveSvg2);
+  }
+
+  rect2.addEventListener("mouseup", onMouseUpRect2);
+  rect2.addEventListener("mousedown", onMouseDownRect2);
+</script>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta content="IE=edge" http-equiv="X-UA-Compatible" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>exp-3</title>
+  <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.js"></script>
+</head>
+<style>
+    svg {
+        border: solid 1px black;
+        border-radius: 10px;
+    }
+
+    body {
+        display: flex;
+        justify-content: center;
+    }
+</style>
+
+<body>
+<svg height="400" id="svg" width="1000" xmlns="http://www.w3.org/2000/svg"></svg>
+<div style="margin-left: 10px">
+  <div>
+    <div>Rect 的初始 x</div>
+    <input id="x" placeholder="输入 Rect 的初始 x" value="300" />
+  </div>
+  <div>
+    <div>Rect 的初始 y</div>
+    <input id="y" placeholder="输入 Rect 的初始 y" value="300" />
+  </div>
+  <div>
+    <div>Rect 的十六进制颜色</div>
+    <input id="color" placeholder="输入 Rect 的十六进制颜色" value="black" />
+  </div>
+  <div>
+    <div>Rect 的宽度</div>
+    <input id="width" placeholder="输入 Rect 的宽度" value="100" />
+  </div>
+  <div>
+    <div>Rect 的高度</div>
+    <input id="height" placeholder="输入 Rect 的高度" value="100" />
+  </div>
+  <button onclick="addRect()">添加一个 Rect</button>
+</div>
+</body>
+
+<script>
+  class BleuOnRect {
+    constructor(svg) {
+      this._svg = svg;
+    }
+
+    get graph() {
+      return this._rect;
+    }
+
+    get g() {
+      return this._g;
+    }
+
+    position(x, y) {
+      this._x = x;
+      this._y = y;
+    }
+
+    resize(width, height) {
+      this._width = width;
+      this._height = height;
+    }
+
+    attr(value) {
+      this._attrValue = value;
+    }
+
+    /**
+     * 鼠标在 svg 元素内移动。
+     * 1. 鼠标点击 rect 元素时，鼠标的坐标 x 和 y
+     * 2. 鼠标点击 rect 元素时，rect 元素那个时候的左上角 x 和 y
+     * 3. 计算 1 中，鼠标坐标 x 与 2 中 rect 元素左上角的 x，得到一个差值 difX
+     * 4. 计算 2 中，鼠标坐标 y 与 2 中 rect 元素左上角的 y，得到一个差值 difY
+     *
+     * 鼠标移动的 offsetX 要与 difX 进行相减，调整 rect 元素跟鼠标不发生偏移和抖动
+     * 鼠标移动的 offsetY 要与 difY 进行相减，调整 rect 元素跟鼠标不发生偏移和抖动
+     */
+    onMouseMoveSVG = e => {
+      const difX = this._clickX - this._lastX;
+      const difY = this._clickY - this._lastY;
+      this._x = e.offsetX - difX;
+      this._y = e.offsetY - difY;
+      this._g.setAttribute("transform", `translate(${this._x}, ${this._y})`);
+    };
+
+    // 移动之前要记录上一次的x和y是多少
+    // 移动时要在e.offsetX基础之上加上鼠标点击的位置减去原本的x和y
+
+    /**
+     * 鼠标点击之后需要记录以下两个数据：
+     * 1. 记录本次点击的 offsetX 和 offsetY
+     * 2. 记录本次点击 rect 元素所在左上角的坐标，x 和 y
+     */
+    onMouseDown = e => {
+      this._lastX = this._x;
+      this._lastY = this._y;
+      this._clickX = e.offsetX;
+      this._clickY = e.offsetY;
+      this._svg.addEventListener("mousemove", this.onMouseMoveSVG);
+    };
+
+    onMouseUp = e => {
+      this._svg.removeEventListener("mousemove", this.onMouseMoveSVG);
+    };
+
+    create = () => {
+      this._rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+      this._rect.setAttribute("width", this._width);
+      this._rect.setAttribute("height", this._height);
+      this._rect.setAttribute("fill", this._attrValue.fill);
+
+      this._g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      this._g.setAttribute("transform", `translate(${this._x}, ${this._y})`);
+
+      this._g.appendChild(this._rect);
+      this._svg.appendChild(this._g);
+
+      this.createEvent();
+    };
+
+    createEvent = () => {
+      this._g.addEventListener("mousedown", this.onMouseDown);
+      this._g.addEventListener("mouseup", this.onMouseUp);
+    };
+  }
+
+  const svg = document.getElementById("svg");
+
+  const rect1 = new BleuOnRect(svg);
+  rect1.position(100, 100);
+  rect1.resize(100, 100);
+  rect1.attr({ fill: "blue" });
+  rect1.create();
+
+  const rect2 = new BleuOnRect(svg);
+  rect2.position(300, 100);
+  rect2.resize(100, 100);
+  rect2.attr({ fill: "green" });
+  rect2.create();
+
+  const rect3 = new BleuOnRect(svg);
+  rect3.position(200, 200);
+  rect3.resize(100, 100);
+  rect3.attr({ fill: "red" });
+  rect3.create();
+
+  function addRect() {
+    const x = $("#x").val();
+    const y = $("#y").val();
+    const color = $("#color").val();
+    const width = $("#width").val();
+    const height = $("#height").val();
+
+    const rect = new BleuOnRect(svg);
+    rect.position(x, y);
+    rect.resize(width, height);
+    rect.attr({ fill: color });
+    rect.create();
+  }
+</script>
+</html>

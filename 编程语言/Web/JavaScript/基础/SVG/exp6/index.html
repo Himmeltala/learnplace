@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta content="IE=edge" http-equiv="X-UA-Compatible" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>exp-6</title>
+  <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.js"></script>
+  <link href="./index.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<svg height="600" id="svg" width="1300" xmlns="http://www.w3.org/2000/svg"></svg>
+</body>
+
+<script src="./bleu-on-rect.js" type="text/javascript"></script>
+<script src="./bleu-on-link.js" type="text/javascript"></script>
+<script>
+  const svg = document.getElementById("svg");
+
+  // rect1
+  const rect1 = new BleuOnRect(svg);
+  rect1.position(100, 150);
+  rect1.resize(100, 100);
+  rect1.attr({ fill: "#778899" });
+  rect1.create();
+
+  // rect2
+  const rect2 = new BleuOnRect(svg);
+  rect2.position(400, 300);
+  rect2.resize(100, 100);
+  rect2.attr({ fill: "#808000" });
+  rect2.create();
+
+  // link1
+  const link1 = new BleuOnLink(svg);
+  link1.source(rect1);
+  link1.target(rect2);
+
+  // rect3
+  const rect3 = new BleuOnRect(svg);
+  rect3.position(700, 150);
+  rect3.resize(100, 100);
+  rect3.attr({ fill: "#2F4F4F" });
+  rect3.create();
+
+  // link2
+  const link2 = new BleuOnLink(svg);
+  link2.source(rect2);
+  link2.target(rect3);
+
+  // rect4
+  const rect4 = new BleuOnRect(svg);
+  rect4.position(400, 0);
+  rect4.resize(100, 100);
+  rect4.attr({ fill: "#2F4F4F" });
+  rect4.create();
+
+  // link3
+  const link3 = new BleuOnLink(svg);
+  link3.source(rect2);
+  link3.target(rect4);
+</script>
+</html>

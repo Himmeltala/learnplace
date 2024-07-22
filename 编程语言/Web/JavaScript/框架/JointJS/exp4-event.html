@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>exp4-event</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/jointjs/3.7.4/joint.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<!-- content -->
+<div id="myholder"></div>
+
+<!-- dependencies -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.4.1/backbone.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jointjs/3.7.4/joint.js"></script>
+
+<!-- code -->
+<script>
+  const namespace = joint.shapes;
+  const graph = new joint.dia.Graph({}, { cellNamespace: namespace });
+
+  const paper = new joint.dia.Paper({
+    el: document.getElementById("myholder"),
+    model: graph,
+    width: 1000,
+    height: 400, // height had to be increased
+    gridSize: 10,
+    drawGrid: true,
+    background: {
+      color: "rgba(0, 255, 0, 0.3)"
+    },
+    cellViewNamespace: namespace
+  });
+
+  const rect1 = new joint.shapes.standard.Rectangle();
+  rect1.position(100, 30);
+  rect1.resize(100, 40);
+  rect1.attr({
+    body: {
+      fill: "blue"
+    },
+    label: {
+      text: "Hello",
+      fill: "white"
+    }
+  });
+  rect1.addTo(graph);
+
+  const rect2 = new joint.shapes.standard.Rectangle();
+  rect2.position(400, 30);
+  rect2.resize(100, 40);
+  rect2.attr({
+    body: {
+      fill: "#2C3E50",
+      rx: 5,
+      ry: 5,
+      strokeWidth: 2
+    },
+    label: {
+      text: "World!",
+      fill: "#3498DB",
+      fontSize: 18,
+      fontWeight: "bold",
+      fontVariant: "small-caps"
+    }
+  });
+  rect2.addTo(graph);
+
+  const link = new joint.shapes.standard.Link();
+  link.source(rect1);
+  link.target(rect2);
+  link.addTo(graph);
+
+  paper.on("link:pointerdblclick", function(linkView) {
+    const currentLink = linkView.model;
+    currentLink.attr("line/stroke", "orange");
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta content="IE=edge" http-equiv="X-UA-Compatible" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>图片查看器</title>
+  <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.js"></script>
+</head>
+<body>
+<style>
+    .hover {
+        cursor: pointer;
+    }
+
+    .flex {
+        display: flex;
+        align-items: center;
+        align-content: center;
+        justify-content: center;
+    }
+</style>
+<style>
+    .zoom {
+        display: none;
+    }
+
+    .zoom-active {
+        z-index: 99;
+        display: block !important;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.456);
+    }
+
+    .zoom__box {
+        position: relative;
+    }
+
+    .zoom__box,
+    .zoom__img {
+        width: 100%;
+        height: 100%;
+    }
+
+    .zoom-img {
+        z-index: 999;
+    }
+
+    .zoom__close {
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+
+    .zoom__tool {
+        width: 100%;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+    }
+
+    .zoom__close,
+    .zoom__rotate_in,
+    .zoom__rotate_out,
+    .zoom__rotate_left,
+    .zoom__rotate_right {
+        z-index: 9999;
+        color: white;
+        border-radius: 100%;
+        padding: 10px;
+        width: 50px;
+        height: 50px;
+        background-color: rgba(228, 228, 228, 0.7);
+    }
+</style>
+<div class="zoom">
+  <div class="zoom__box">
+    <div class="zoom__img flex">
+      <img class="zoom-img" />
+    </div>
+    <div class="zoom__close flex hover">关闭</div>
+    <div class="zoom__tool flex">
+      <div class="zoom__rotate_in flex hover">放大</div>
+      <div class="zoom__rotate_out flex hover">缩小</div>
+      <div class="zoom__rotate_left flex hover">左旋转</div>
+      <div class="zoom__rotate_right flex hover">右旋转</div>
+    </div>
+  </div>
+</div>
+<div>
+  <img
+    class="img"
+    src="https://img2.baidu.com/it/u=1091814814,3320002103&fm=253&fmt=auto&app=138&f=JPG?w=500&h=889" />
+  <img
+    class="img"
+    src="https://img1.baidu.com/it/u=2095580745,1406561014&fm=253&fmt=auto&app=120&f=JPEG?w=1280&h=800" />
+</div>
+
+<script>
+  function setRotate(rotate) {
+    $(".zoom-img").css({
+      transition: "all 0.5s ease-in-out",
+      transform: `rotate(${rotate}deg)`
+    });
+  }
+
+  function setSize(self, deltaY) {
+    const height = $(self).height();
+    const width = $(self).width();
+
+    if (deltaY < 0) {
+      return {
+        width: width + width * 0.2,
+        height: height + height * 0.2
+      };
+    } else {
+      return {
+        width: width - width * 0.2,
+        height: height - height * 0.2
+      };
+    }
+  }
+</script>
+
+<script>
+  let rotate = 0;
+
+  $(".img").on("click", function(e) {
+    $(".zoom").addClass("zoom-active");
+    $(".zoom-img").attr("src", $(this).attr("src"));
+    $(".zoom-img").css({
+      height: $(this).height() * 0.7,
+      width: $(this).width() * 0.7
+    });
+    $("body").css({
+      overflow: "hidden"
+    });
+  });
+
+  $(".zoom__close").on("click", function(e) {
+    $(".zoom").removeClass("zoom-active");
+    rotate = 0;
+    $(".zoom-img").css({
+      transition: "all 0.1s ease-in-out",
+      transform: "rotate(0deg)"
+    });
+    $("body").css({
+      overflow: "auto"
+    });
+  });
+
+  $(".zoom__rotate_left").on("click", function() {
+    rotate += 90;
+    setRotate(rotate);
+  });
+
+  $(".zoom__rotate_right").on("click", function() {
+    rotate -= 90;
+    setRotate(rotate);
+  });
+
+  $(".zoom__rotate_in").on("click", function(e) {
+    const size = setSize(".zoom-img", -1);
+    $(".zoom-img").css({
+      transition: "all 0.05s ease-in-out",
+      width: size.width,
+      height: size.height
+    });
+  });
+
+  $(".zoom__rotate_out").on("click", function(e) {
+    const size = setSize(".zoom-img", 1);
+    $(".zoom-img").css({
+      transition: "all 0.05s ease-in-out",
+      width: size.width,
+      height: size.height
+    });
+  });
+
+  $(".zoom-img").on("mousewheel", function(e) {
+    const size = setSize(this, e.originalEvent.deltaY);
+
+    $(this).css({
+      transition: "all 0.05s ease-in-out",
+      width: size.width,
+      height: size.height
+    });
+  });
+</script>
+</body>
+</html>
