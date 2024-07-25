@@ -1,0 +1,39 @@
+.文章内容,
+.语法解释 {
+  border-radius: 12px;
+  border: 2px solid black;
+  padding: 6px 12px;
+}
+
+.flex {
+  display: flex;
+  justify-content: space-between;
+}
+
+.flex div {
+  width: 45%;
+}
+
+/* 未访问的链接颜色 */
+a:link {
+  color: inherit; /* 使用父元素的颜色 */
+}
+
+/* 已访问的链接颜色 */
+a:visited {
+  color: inherit; /* 使用父元素的颜色 */
+}
+
+/* 悬停时的链接颜色 */
+a:hover {
+  color: inherit; /* 使用父元素的颜色 */
+}
+
+/* 激活时的链接颜色 */
+a:active {
+  color: inherit; /* 使用父元素的颜色 */
+}
+
+.trans {
+  font-size: 14px;
+}
