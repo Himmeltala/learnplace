@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>01-flexbox-元素均匀排列</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      /* 一行 n 个子元素，子元素的宽度为 x%，column-gap 为 (100% - n * x%) / (n - 1)，row-gap 为 column-gap / 2，结果向下取整 */
+      .flexbox {
+        width: 22%;
+        height: 150px;
+      }
+
+      .container {
+        width: 500px;
+        height: 1000px;
+        border: 1px solid red;
+        /* flex */
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-content: flex-start;
+        justify-content: flex-start;
+        /* flex */
+
+        /* flex-gap */
+        column-gap: 4%;
+        row-gap: 2%;
+        /* flex-gap */
+      }
+
+      .flexbox-1 {
+        background-color: aliceblue;
+      }
+
+      .flexbox-2 {
+        background-color: aqua;
+      }
+
+      .flexbox-3 {
+        background-color: beige;
+      }
+
+      .flexbox-4 {
+        background-color: bisque;
+      }
+
+      .flexbox-5 {
+        background-color: blueviolet;
+      }
+
+      .flexbox-6 {
+        background-color: brown;
+      }
+
+      .flexbox-7 {
+        background-color: cadetblue;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="flexbox flexbox-1"></div>
+      <div class="flexbox flexbox-2"></div>
+      <div class="flexbox flexbox-3"></div>
+      <div class="flexbox flexbox-4"></div>
+      <div class="flexbox flexbox-5"></div>
+      <div class="flexbox flexbox-6"></div>
+      <div class="flexbox flexbox-7"></div>
+    </div>
+  </body>
+</html>
